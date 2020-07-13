@@ -99,7 +99,7 @@ class format_remuiformat_list_all_sections_summary implements renderable, templa
     }
 
     private function get_list_format_context(&$export, $renderer, $editing, $rformat) {
-        global $DB, $OUTPUT, $USER;
+        global $DB, $OUTPUT, $USER, $COURSE;
         $coursecontext = context_course::instance($this->course->id);
         $modinfo = get_fast_modinfo($this->course);
 
@@ -143,6 +143,14 @@ class format_remuiformat_list_all_sections_summary implements renderable, templa
             $export->generalsection['percentage'] = $percentage;
         }
 
+        // @tictologo 20200710 - return dates of course (start - end)
+        setlocale(LC_TIME, 'es_ES.UTF-8');
+        $export->generalsection['startdate'] = ucwords(strftime("%d %b, %Y", $COURSE->startdate));
+        $export->generalsection['enddate'] = ucwords(strftime("%d %b, %Y", $COURSE->enddate));
+        // Resume button
+        $export->resumeactivityurl = $this->courseformatdatacommontrait->get_activity_to_resume($this->course);                 
+        // ending @tictologo
+
         // For right side.
         $rightside = $renderer->section_right_content($generalsection, $this->course, false);
         $export->generalsection['rightside'] = $rightside;
@@ -158,10 +166,11 @@ class format_remuiformat_list_all_sections_summary implements renderable, templa
                 $count = 1;
                 $export->generalsection['teachers'] = $teachers;
                 $export->generalsection['teachers']['teacherimg'] =
-                '<div class="teacher-label"><span>'
-                .get_string('teachers', 'format_remuiformat').
-                '</span></div>
-                <div class="carousel slide" data-ride="carousel" id="teachers-carousel">
+                // @tictologo hide teacher label
+                //""'<div class="teacher-label"><span>'
+                //.get_string('teachers', 'format_remuiformat').
+                //""'</span></div>
+                '<div class="carousel slide" data-ride="carousel" id="teachers-carousel">
                 <div class="carousel-inner text-center">';
 
                 foreach ($teachers as $teacher) {
@@ -189,7 +198,7 @@ class format_remuiformat_list_all_sections_summary implements renderable, templa
                     $export->generalsection['teachers']['teacherimg'] .= '</div></div>';
                     $count += 1;
                 }
-                if (count($teachers) > 2) {
+                if (count($teachers) > 0) { //@ticologo show arrow slide always
                     $export->generalsection['teachers']['teacherimg'] .=
                     '</div><a class="carousel-control-prev" href="#teachers-carousel" role="button" data-slide="prev">
                             <i class="fa fa-chevron-left"></i>

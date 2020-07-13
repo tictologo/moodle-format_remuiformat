@@ -16,6 +16,11 @@
 }}
 
 {{!
+All the code in this template was replaced by the code in /remuiformat/templates/card_section_summary.mustache. This was done to merge the two course formats (list and cards). New CSS styles added.
+@Mario Alejandro López Ocampo // 202011071
+}}
+
+{{!
     @template format_remuiformat/list_sections_summary
 
 
@@ -43,9 +48,9 @@
 {{#addsection}}
 <li id="{{divid}}" class="card main clearfix mb-4 m-b-2" role="region" style="">
    <div class="content card-block px-15 px-3 py-10 py-2 remui-list-content-border d-flex align-items-center " style="clear:both;">
+
       {{#numsections}}
          <a href="{{{addurl}}}" class="{{addurlclass}}">{{{addicon}}} {{{straddsection}}}</a>
-
          {{#strremovesection}}
          <a href="{{{removeurl}}}" class="{{removeurlclass}}">{{{removeicon}}} {{{strremovesection}}}</a>
          {{/strremovesection}}
@@ -58,48 +63,62 @@
 </li>
 {{/addsection}}
 
+
 {{^addsection}}
-<li id="section-{{{index}}}" class="card section main clearfix mb-4 wdm-card" role="region" style="" aria-label="">
-   {{#highlighted}}<div class="list-current moodle-has-zindex bg-primary"></div>{{/highlighted}}
-   <span class="hidden sectionname">{{{ title }}}</span>
-   <div class="content card-block px-15 py-15 py-3 px-3 remui-list-content-border" style="clear:both;">
-      <div class="row d-block">
-        <div class="left side float-left">
-          {{{ leftside }}}
+<div class="col-lg-12 col-md-12 col-sm-12 single-card-container" style ="padding: 0 !important;">
+    <div class="single-card m-b-2 mb-25 mb-4 p-15 p-3">
+                
+        <div class='wdmoverlay' style="background-color: {{remuidefaultsectionoverlay}}"></div>
+
+        {{#highlighted}}<div class="card-current moodle-has-zindex text-primary"></div>{{/highlighted}}
+       
+        <div class='d-flex position-relative justify-content-end'>
+            {{{ addnewsection }}}
+            {{{ optionmenu }}}
         </div>
-         <div class="right side float-right d-flex">
-           {{{ addnewsection }}}
-           {{{ optionmenu }}}
-         </div>
-         {{{leftside}}}
-      </div>
-      <h4 class="sectionname card-title">
-         {{#editing}}
-            {{{ title }}}
-         {{/editing}}
-         {{^editing}}
-            <a class="panel-title p-0" href="{{{ singlepageurl }}}" aria-expanded="{{#collapsed}}false{{/collapsed}}{{#expanded}}true{{/expanded}}" aria-controls="sectionwrapper-{{{index}}}">{{{ title }}}
+
+        <div class="card-content pb-10 pb-2 mb-25">
+            {{#addnewsection}}
+            <h2 class="section-title" style="color: {{remuinewfontcolor}}">{{{ title }}}</h2>
+            {{/addnewsection}}
+
+            {{^addnewsection}}
+            <a href="{{{ singlepageurl }}}"><h2 class="section-title {{{remuinewthemecolor}}}">{{{ title }}} <i class="fa fa-sign-out" aria-hidden="true" style="float:right"></i></h2></a>
+            {{/addnewsection}}
+
+            <div class="wdm-section-summary {{{remuinewthemecolor}}}">{{{ summary }}}</div>
+
+            <div class="section-summary-activities">
+                {{#activityinfo}}
+                <span class="section-mod-details {{#hidden}}text-muted{{/hidden}}" style="color: {{remuinewfontcolor}}">{{ . }}</span>
+                {{/activityinfo}}
+            </div>
+
+            <div class="section-summary-activities mdl-left {{#expanded}}hide{{/expanded}}">{{#str}}listactivities, format_remuiformat{{/str}}{{{activityinfostring}}}</div>
+                  
+            {{{ hiddenmessage }}}
+
+            {{#editsectionurl}}
+            <a class="text-muted" href="{{ editsectionurl }}">
+            <span><i class="fa fa-cog font-size-20 mb-5" aria-hidden="true"></i></span>
             </a>
-            {{#progressinfo}}
-               {{#completed}}
-                  <!-- Default checked -->
-                  <div class="float-right">
-                     <i class="fa fas fa-check-square text-success"></i>
-                     <!-- {{{ progress }}} -->
-                  </div>
-               {{/completed}}
-            {{/progressinfo}}
-         {{/editing}}
-      </h4>
-      {{{ hiddenmessage }}}
-      <div class="summary card-text {{#expanded}}hide{{/expanded}}">{{{summary}}}</div>
-      {{#availability}}
-      <div class="section_availability badge badge-pill badge-info mb-10">
-        {{{availability}}}
-      </div>
-      {{/availability}}
-      <div class="section-summary-activities mdl-right {{#expanded}}hide{{/expanded}}">{{{activityinfostring}}}</div>
-   </div>
-   <span class="hidden sectionname">{{{ title }}}</span>
-</li>
+            {{/editsectionurl}}
+
+         </div>
+
+         <div class="section-action-container card-bottom d-flex {{^hidden}}text-primary{{/hidden}}{{#hidden}}text-muted{{/hidden}}">
+            <div class="text-right progress-text">
+               {{#progressinfo}}
+                  {{{ progress }}}
+               {{/progressinfo}}
+            </div>
+         </div>
+
+         {{#progressinfo}}
+            <div class="progress progress-xs {{{remuinewthemecolor}}} m-b-1" style = "margin-bottom: -1rem!important; width: inherit; height: 12px !important;">
+               <div class="progress-bar-section" style="width: {{ percentage }}%" role="progressbar"></div>
+            </div>
+         {{/progressinfo}}
+    </div>
+</div>
 {{/addsection}}
