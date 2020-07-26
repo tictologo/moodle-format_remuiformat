@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020061800;                    // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2020061802;                    // The current plugin version @tictologo add .2 20200725
 $plugin->release   = '1.0.7';
 $plugin->requires  = 2017111300;                    // Requires this Moodle version (Moodle V3.4.0).
 $plugin->maturity  = MATURITY_STABLE;

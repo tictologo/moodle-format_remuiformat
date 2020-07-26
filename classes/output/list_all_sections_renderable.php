@@ -99,7 +99,7 @@ class format_remuiformat_list_all_sections implements renderable, templatable {
     }
 
     private function get_list_format_context(&$export, $renderer, $editing, $rformat) {
-        global $DB, $OUTPUT, $USER;
+        global $DB, $OUTPUT, $USER, $COURSE, $CFG;
         $coursecontext = context_course::instance($this->course->id);
         $modinfo = get_fast_modinfo($this->course);
 
@@ -144,25 +144,43 @@ class format_remuiformat_list_all_sections implements renderable, templatable {
             $export->generalsection['percentage'] = $percentage;
         }
 
+        // @tictologo 20200710 - return dates of course (start - end)
+        setlocale(LC_TIME, 'es_ES.UTF-8');
+        $export->generalsection['startdate'] = ucwords(strftime("%d %b, %Y", $COURSE->startdate));
+        $export->generalsection['enddate'] = ucwords(strftime("%d %b, %Y", $COURSE->enddate));
+        // Grade button
+        $export->resumeactivityurl = $CFG->wwwroot . '/grade/report/index.php?id=' . $COURSE->id;
+        // ending @tictologo
+        
+
         // For right side.
         $rightside = $renderer->section_right_content($generalsection, $this->course, false);
         $export->generalsection['rightside'] = $rightside;
         $displayteacher = $this->settings['remuiteacherdisplay'];
         if ($displayteacher == 1) {
-            $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
-            $teachers = null;
-            if (!empty($role)) {
-                $teachers = get_role_users($role->id, $coursecontext);
-            }
+
+            //@tictologo 20200723 Show all roles with archetype editingteacher or teacher
+            $roleedit = $DB->get_records('role', array('archetype' => 'editingteacher')); 
+            $rolenoedit= $DB->get_records('role', array('archetype' => 'teacher'));
+            $roles = array_merge($roleedit,$rolenoedit);
+            
+            $teachers = array();
+            foreach($roles as $role) {
+                if(!empty($role->id)){
+                    $teacher = get_role_users($role->id, $coursecontext);
+                    $teachers = array_merge( $teachers, $teacher);
+                }
+            } //@tictologo ending
             // For displaying teachers.
             if (!empty($teachers)) {
                 $count = 1;
                 $export->generalsection['teachers'] = $teachers;
-                $export->generalsection['teachers']['teacherimg'] = '
-                <div class="teacher-label"><span>'
-                .get_string('teachers', 'format_remuiformat').
-                '</span></div>
-                <div class="carousel slide" data-ride="carousel" id="teachers-carousel">
+                $export->generalsection['teachers']['teacherimg'] =
+                // @tictologo hide teacher label
+                //""'<div class="teacher-label"><span>'
+                //.get_string('teachers', 'format_remuiformat').
+                //""'</span></div>
+                '<div class="carousel slide" data-ride="carousel" id="teachers-carousel">
                 <div class="carousel-inner text-center">';
 
                 foreach ($teachers as $teacher) {
@@ -189,7 +207,7 @@ class format_remuiformat_list_all_sections implements renderable, templatable {
                     $export->generalsection['teachers']['teacherimg'] .= '</div></div>';
                     $count += 1;
                 }
-                if (count($teachers) > 2) {
+                if (count($teachers) > 0) { //@ticologo show arrow slide always
                     $export->generalsection['teachers']['teacherimg'] .=
                     '</div><a class="carousel-control-prev" href="#teachers-carousel" role="button" data-slide="prev">
                             <i class="fa fa-chevron-left"></i>

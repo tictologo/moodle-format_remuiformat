@@ -164,3 +164,4 @@ $string['startdate'] = "Start date";
 $string['enddate'] = "End date";
 $string['studentprogress'] = "Your progress in activities";
 $string['listactivities'] = "You will find here: ";
+$string['showhide'] = "Show/hide contents";

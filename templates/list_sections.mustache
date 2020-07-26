@@ -44,8 +44,7 @@
 <li id="{{divid}}" class="card main clearfix mb-4 m-b-2" role="region" style="">
    <div class="content card-block px-15 px-3 py-10 py-2 remui-list-content-border d-flex align-items-center " style="clear:both;">
       {{#numsections}}
-         <a href="{{{addurl}}}" class="{{addurlclass}}">{{{addicon}}} {{{straddsection}}}</a>
-
+         <a href="{{{addurl}}}" class="{{addurlclass}}">{{{addicon}}} {{{straddsection}}}</a>         
          {{#strremovesection}}
          <a href="{{{removeurl}}}" class="{{removeurlclass}}">{{{removeicon}}} {{{strremovesection}}}</a>
          {{/strremovesection}}
@@ -73,19 +72,14 @@
          </div>
          {{{leftside}}}
       </div>
-      <h4 class="sectionname card-title">
+
+      <h4 class="sectionname card-title mb-3">
         {{#editing}}
             {{{ title }}}
          {{/editing}}
          {{^editing}}
             <a class="panel-title p-0 {{#expanded}}true{{/expanded}}" data-toggle="collapse" href="#sectionwrapper-{{{index}}}" aria-expanded="{{#collapsed}}false{{/collapsed}}{{#expanded}}true{{/expanded}}" aria-controls="sectionwrapper-{{{index}}}">{{{ title }}}
             {{/editing}}
-               {{#collapsed}}
-               <i class="fa fa-angle-down float-right"></i>
-               {{/collapsed}}
-               {{#expanded}}
-               <i class="fa fa-angle-up float-right"></i>
-               {{/expanded}}
                {{^editing}}
                   {{#progressinfo}}
                      {{#completed}}
@@ -100,12 +94,28 @@
             </a>
       </h4>
       {{{ hiddenmessage }}}
-      <div class="summary card-text">{{{summary}}}</div>
+      <div class="summary card-text mb-3">{{{summary}}}</div>
       <div class="section_availability badge badge-pill badge-info mb-10">{{{availability}}}</div>
-      <div class="section-summary-activities mdl-right mb-10">{{{activityinfostring}}}</div>
+            {{^editing}}
+            <a class="panel-title p-0 {{#expanded}}true{{/expanded}}" data-toggle="collapse" href="#sectionwrapper-{{{index}}}" aria-expanded="{{#collapsed}}false{{/collapsed}}{{#expanded}}true{{/expanded}}" aria-controls="sectionwrapper-{{{index}}}">
+            {{/editing}}
+               {{#collapsed}}
+               <i class="fa fa-arrow-circle-down"></i>
+               {{/collapsed}}
+               {{#expanded}}
+               <i class="fa fa-angle-up float-right"><b><span class="show-hide-content">{{#str}}showhide, format_remuiformat{{/str}}</span></b></i>
+               {{/expanded}}
+            </a>
+            <br/>
+
       <div class="px-15 px-3 py-10 py-2 card-footer card-footer-transparent text-muted border-top {{#collapsed}}collapse{{/collapsed}}{{#expanded}}show{{/expanded}}">
          {{{sectionactivities}}}
       </div>
+         {{#progressinfo}}
+            <div class="progress progress-xs {{{remuinewthemecolor}}} m-b-1" style = "margin-bottom: -1rem!important; width: inherit; height: 12px !important;">
+               <div class="progress-bar-section" style="width: {{ percentage }}%" role="progressbar"></div>
+            </div>
+         {{/progressinfo}}
    </div>
    <span class="hidden sectionname">{{{ title }}}</span>
 </li>

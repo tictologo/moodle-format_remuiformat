@@ -147,8 +147,8 @@ class format_remuiformat_list_all_sections_summary implements renderable, templa
         setlocale(LC_TIME, 'es_ES.UTF-8');
         $export->generalsection['startdate'] = ucwords(strftime("%d %b, %Y", $COURSE->startdate));
         $export->generalsection['enddate'] = ucwords(strftime("%d %b, %Y", $COURSE->enddate));
-        // Resume button
-        $export->resumeactivityurl = $this->courseformatdatacommontrait->get_activity_to_resume($this->course);                 
+        // Grade button
+        $export->resumeactivityurl = $CFG->wwwroot . '/grade/report/index.php?id=' . $COURSE->id;
         // ending @tictologo
 
         // For right side.
@@ -156,11 +156,18 @@ class format_remuiformat_list_all_sections_summary implements renderable, templa
         $export->generalsection['rightside'] = $rightside;
         $displayteacher = $this->settings['remuiteacherdisplay'];
         if ($displayteacher == 1) {
-            $role = $DB->get_record('role', array('shortname' => 'editingteacher'));
-            $teachers = null;
-            if (!empty($role)) {
-                $teachers = get_role_users($role->id, $coursecontext);
-            }
+            //@tictologo 20200723 Show all roles with archetype editingteacher or teacher
+            $roleedit = $DB->get_records('role', array('archetype' => 'editingteacher')); 
+            $rolenoedit= $DB->get_records('role', array('archetype' => 'teacher'));
+            $roles = array_merge($roleedit,$rolenoedit);
+            
+            $teachers = array();
+            foreach($roles as $role) {
+                if(!empty($role->id)){
+                    $teacher = get_role_users($role->id, $coursecontext);
+                    $teachers = array_merge( $teachers, $teacher);
+                }
+            } //@tictologo ending
             // For displaying teachers.
             if (!empty($teachers)) {
                 $count = 1;
